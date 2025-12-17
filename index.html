@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projet Abysse</title>
+    <style>
+        /* --- 1. LE FOND --- */
+        body {
+            margin: 0;
+            height: 100vh;
+            background: radial-gradient(circle at center, #102030 0%, #000000 80%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: sans-serif;
+        }
+
+        .container {
+            position: relative;
+            width: 350px;
+            height: 350px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- 2. L'IMAGE DU CŒUR --- */
+        #heart-image {
+            width: 100%;
+            max-width: 250px;
+            height: auto;
+            z-index: 1;
+            /* Synchronisé avec l'ECG sur 2.5 secondes (Rythme lent et profond) */
+            animation: organic-beat 2.5s infinite cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @keyframes organic-beat {
+            0%, 100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 30px rgba(255, 60, 0, 0.7)) brightness(1.1);
+            }
+            15% {
+                transform: scale(1.08); 
+                filter: drop-shadow(0 0 60px rgba(255, 100, 20, 1)) brightness(1.4);
+            }
+            30% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 30px rgba(255, 60, 0, 0.7)) brightness(1.1);
+            }
+        }
+
+        /* --- 3. L'ECG "SERPENT VISIBLE" --- */
+        .ecg-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 350px;
+            height: 120px;
+            z-index: 2;
+            mix-blend-mode: screen; 
+            pointer-events: none;
+            
+            /* Masque plus doux sur les bords */
+            mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+        }
+
+        .ecg-line {
+            fill: none;
+            stroke: rgba(200, 240, 255, 0.95);
+            /* LIGNE PLUS ÉPAISSE POUR LA VISIBILITÉ */
+            stroke-width: 3.5; 
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.9)); /* Gros effet néon */
+            
+            /* LE SERPENT : 
+               250px de trait visible (c'est long, donc bien visible)
+               1000px de vide 
+            */
+            stroke-dasharray: 250 1000;
+            
+            /* Animation ralentie à 2.5s pour que l'œil puisse suivre */
+            animation: pulse-travel 2.5s linear infinite; 
+        }
+
+        @keyframes pulse-travel {
+            from {
+                stroke-dashoffset: 1250; /* 250 + 1000 */
+            }
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        /* --- 4. LE BOUTON --- */
+        button {
+            margin-top: 50px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.6);
+            padding: 15px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: 0.3s;
+            z-index: 10;
+            outline: none;
+        }
+        
+        button:hover {
+            border-color: rgba(255, 100, 50, 0.6);
+            color: white;
+            box-shadow: 0 0 20px rgba(255, 50, 0, 0.2);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <img id="heart-image" src="coeur.png" alt="Cœur">
+        
+        <svg class="ecg-overlay" viewBox="0 0 350 100" preserveAspectRatio="none">
+            <path class="ecg-line" d="M0,50 L100,50 L130,50 L140,20 L150,80 L160,50 L190,50 L350,50" />
+        </svg>
+    </div>
+
+    <audio id="audio" src="battement.m4a" loop></audio>
+
+    <button id="play-btn">Écoute mon cœur..</button>
+
+    <script>
+        const btn = document.getElementById('play-btn');
+        const audio = document.getElementById('audio');
+        let isPlaying = false;
+
+        btn.addEventListener('click', function() {
+            if (!isPlaying) {
+                audio.play();
+                isPlaying = true;
+                btn.style.borderColor = 'rgba(255, 60, 0, 0.8)';
+                btn.style.color = 'white';
+                btn.innerText = 'Il bat pour toi';
+            } else {
+                audio.pause();
+                isPlaying = false;
+                btn.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                btn.style.color = 'rgba(255, 255, 255, 0.6)';
+                btn.innerText = "Lancer l'immersion";
+            }
+        });
+    </script>
+
+</body>
+</html>
